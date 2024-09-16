@@ -1,2 +1,2 @@
 # Patch4Breast
-Cut patches and get 3-class lable for breast cancer
+Cut patches and get 3-classes lables for breast cancer
