@@ -65,11 +65,13 @@ def get_polygons(sdpl_file, X, Y, W, H,ROI_Polygon=None):
             Ref_x, Ref_y = int(CurPicRect.split(',')[0]), int(CurPicRect.split(',')[1])
             Ref_x = int(Ref_x)
             Ref_y = int(Ref_y)
+            left_top = element['LabelInfo']["ImgLeftTopPoint"]
+            lt_x,lt_y = int(left_top.split(',')[0]),int(left_top.split(',')[1])
             zoom = element['LabelInfo']["ZoomScale"]
             new_points = []
             for point in points:
-                new_point_1 = (point[0] + Ref_x) // zoom
-                new_point_2 = (point[1] + Ref_y) // zoom
+                new_point_1 = (point[0] + Ref_x - lt_x) // zoom
+                new_point_2 = (point[1] + Ref_y - lt_y) // zoom
                 new_point = (new_point_1,new_point_2)
                 new_points.append(new_point)
             polygon_points = new_points.copy()
@@ -257,12 +259,14 @@ def find_black_and_red(sdpl_file):
             Rect = element['LabelInfo']["Rect"]
             color = element['LabelInfo']["PenColor"]
             Ref_x, Ref_y = int(CurPicRect.split(',')[0]), int(CurPicRect.split(',')[1])
+            left_top = element['LabelInfo']["ImgLeftTopPoint"]
+            lt_x,lt_y = int(left_top.split(',')[0]),int(left_top.split(',')[1])
             x, y = int(Rect.split(',')[0]), int(Rect.split(',')[1])
             w, h = int(Rect.split(',')[2]), int(Rect.split(',')[3])
             zoom = element['LabelInfo']["ZoomScale"]
             if w == 0 or h == 0 or w//zoom == 0 or h//zoom == 0:
                 continue
-            read_region_info = [int((Ref_x + x) // zoom), int((Ref_y + y) // zoom), int(w // zoom), int(h // zoom)]
+            read_region_info = [int((Ref_x + x - lt_x) // zoom), int((Ref_y + y - lt_y) // zoom), int(w // zoom), int(h // zoom)]
             if color == 'Black':
                 black_list.append(read_region_info)
             elif color == 'Red':
@@ -314,7 +318,7 @@ def find_big_polygon(sdpl_file):
             black_points = new_points
             black_list.append(black_points)
             black_ROI_index_list.append(i)
-            
+
 
     return black_list,black_ROI_index_list  
             
