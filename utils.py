@@ -292,8 +292,12 @@ def find_big_polygon(sdpl_file):
         if color == 'Black':
             CurPicRect = element['LabelInfo']["CurPicRect"]
             Ref_x, Ref_y = int(CurPicRect.split(',')[0]), int(CurPicRect.split(',')[1])
+            left_top = element['LabelInfo']["ImgLeftTopPoint"]
+            lt_x,lt_y = int(left_top.split(',')[0]),int(left_top.split(',')[1])
+            print(Ref_x,Ref_y)
             ps = element['PointsInfo']["ps"]
             zoom = element['LabelInfo']["ZoomScale"]
+            print('zoom:',zoom)
             black_points = []
             for points in ps:
                 point1,point2 = points.split(', ')[0],points.split(', ')[1]
@@ -303,8 +307,8 @@ def find_big_polygon(sdpl_file):
                 black_points.append(new_points)
             new_points = []
             for points in black_points:
-                new_point_1 = (points[0] + Ref_x) // zoom
-                new_point_2 = (points[1] + Ref_y) // zoom
+                new_point_1 = (points[0] + Ref_x - lt_x) // zoom
+                new_point_2 = (points[1] + Ref_y - lt_y) // zoom
                 new_point = (new_point_1,new_point_2)
                 new_points.append(new_point)
             black_points = new_points
