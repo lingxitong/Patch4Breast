@@ -321,6 +321,81 @@ def find_big_polygon(sdpl_file):
 
 
     return black_list,black_ROI_index_list  
+
+
+def find_blue_polygon(sdpl_file,downsample_factor):
+    black_list = [] 
+    need_polygons = []
+    black_ROI_index_list = []
+    LabelInfoList = sdpl_file['LabelRoot']['LabelInfoList']
+    for i,element in enumerate(LabelInfoList):
+        color = element['LabelInfo']["PenColor"]
+        if color == 'Blue':
+            CurPicRect = element['LabelInfo']["CurPicRect"]
+            Ref_x, Ref_y = int(CurPicRect.split(',')[0]), int(CurPicRect.split(',')[1])
+            left_top = element['LabelInfo']["ImgLeftTopPoint"]
+            lt_x,lt_y = int(left_top.split(',')[0]),int(left_top.split(',')[1])
+            print(Ref_x,Ref_y)
+            ps = element['PointsInfo']["ps"]
+            zoom = element['LabelInfo']["ZoomScale"]
+            print('zoom:',zoom)
+            black_points = []
+            for points in ps:
+                point1,point2 = points.split(', ')[0],points.split(', ')[1]
+                point1 = int(point1)
+                point2 = int(point2)
+                new_points = (point1,point2)
+                black_points.append(new_points)
+            new_points = []
+            for points in black_points:
+                new_point_1 = (points[0] + Ref_x - lt_x) // zoom//downsample_factor
+                new_point_2 = (points[1] + Ref_y - lt_y) // zoom//downsample_factor
+                new_point = (new_point_1,new_point_2)
+                new_points.append(new_point)
+            black_points = new_points
+            black_list.append(black_points)
+            black_ROI_index_list.append(i)
+            need_polygons.append(Polygon(black_points))
+
+
+    return need_polygons
+
+def find_blue_polygon2(sdpl_file,downsample_factor):
+    black_list = [] 
+    need_polygons = []
+    black_ROI_index_list = []
+    LabelInfoList = sdpl_file['LabelRoot']['LabelInfoList']
+    for i,element in enumerate(LabelInfoList):
+        color = element['LabelInfo']["PenColor"]
+        if color == 'Blue':
+            CurPicRect = element['LabelInfo']["CurPicRect"]
+            Ref_x, Ref_y = int(CurPicRect.split(',')[0]), int(CurPicRect.split(',')[1])
+            left_top = element['LabelInfo']["ImgLeftTopPoint"]
+            lt_x,lt_y = int(left_top.split(',')[0]),int(left_top.split(',')[1])
+            print(Ref_x,Ref_y)
+            ps = element['PointsInfo']["ps"]
+            zoom = element['LabelInfo']["ZoomScale"]
+            print('zoom:',zoom)
+            black_points = []
+            for points in ps:
+                point1,point2 = points.split(', ')[0],points.split(', ')[1]
+                point1 = int(point1)
+                point2 = int(point2)
+                new_points = (point1,point2)
+                black_points.append(new_points)
+            new_points = []
+            for points in black_points:
+                new_point_1 = (points[0] + Ref_x - lt_x) // zoom//downsample_factor
+                new_point_2 = (points[1] + Ref_y - lt_y) // zoom//downsample_factor
+                new_point = (new_point_1,new_point_2)
+                new_points.append(new_point)
+            black_points = new_points
+            black_list.append(black_points)
+            black_ROI_index_list.append(i)
+            need_polygons.append(Polygon(black_points))
+
+
+    return black_list   
             
 
 def refine_black_ROI2Polygon(black_ROI_list):
